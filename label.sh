@@ -35,7 +35,8 @@ if [ "$N" -eq 0 ]; then
 fi
 
 declare -A EXCLUDED
-for num in "${EXCLUDED_NUMBERS[@]}"; do
+IFS=' ' read -r -a EXCLUDED_NUMBERS_ARRAY <<< "$EXCLUDED_NUMBERS"
+for num in "${EXCLUDED_NUMBERS_ARRAY[@]}"; do
     EXCLUDED[$num]=1
 done
 
@@ -85,4 +86,8 @@ while [[ $i -lt $M || ${#JOBS[@]} -gt 0 ]]; do
     spawn_jobs  # Try spawning new jobs after checking the already running ones
 done
 
-echo "All tasks finished!"
+echo "All tasks finished! Concatenating the results..."
+
+python "./label_concatenation.py"
+
+echo "File saved at the 'OUTPUT_DF_PATH' location from the config file!"

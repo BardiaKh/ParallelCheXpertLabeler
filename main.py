@@ -127,8 +127,6 @@ if __name__ == "__main__":
         CATEGORIES,
         verbose=False
     )
-
-    df = pd.read_csv(INPUT_DF_PATH)
     
     df = pd.read_csv(INPUT_DF_PATH)
     if SUPER_CAT_IDX * SUPER_CAT_SIZE >= len(df):
