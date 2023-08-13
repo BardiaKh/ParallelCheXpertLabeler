@@ -20,38 +20,7 @@ You can modify these constants to fit your needs. The constants are used by the 
 
 ### label.sh
 
-This is a bash script that automates the process of running the `main.py` script multiple times in parallel. The script accepts the number of workers as a command-line argument.
-
-The crucial parameter in this script is `M`, which is calculated as the total number of rows in your dataset divided by the super-category size. 
-
-#### Calculation of `M`
-
-
-To calculate `M`, simply divide the total number of rows by the super-category size, **make sure you round uo the number**. For example, if you have 123,000 rows in your dataset and you want to process 5000 rows in each super-category, you would do the following:
-
-```bash
-# Define total number of rows and super-category size
-TOTAL_ROWS=123000
-SUPER_CAT_SIZE=5000
-
-# Calculate M using bash and round up
-M=$(echo "(($TOTAL_ROWS + $SUPER_CAT_SIZE - 1) / $SUPER_CAT_SIZE)" | bc)
-
-# Print the calculated M value
-echo $M
-```
-
-In this case, `M` would be 25. After calculating `M`, replace the placeholder in the `label.sh` script with your calculated value:
-
-```bash
-...
-M=<your calculated value>
-...
-```
-
-This allows the script to correctly partition your data into manageable chunks for labelling. 
-
-The script first calculates the excluded numbers (i.e., the tasks which are already processed and hence should not be processed again). It then spawns a number of Python processes up to the specified limit, waits for them to finish, and spawns more until all tasks are complete.
+This is a bash script that automates the process of running the `main.py` script multiple times in parallel. The script accepts the number of workers as a command-line argument. The script first calculates the number of chunks and the excluded numbers (i.e., the tasks which are already processed and hence should not be processed again). It then spawns a number of Python processes up to the specified limit, waits for them to finish, and spawns more until all tasks are complete.
 
 You need to run this script from your command line:
 
