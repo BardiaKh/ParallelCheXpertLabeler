@@ -7,7 +7,14 @@ N=${1:-0}
 SCRIPT="./main.py"
 
 # Total number of tasks
-M=500
+M=$(python3 -c "
+import os
+import math
+import pandas as pd
+from config import INPUT_DF_PATH, SUPER_CAT_SIZE
+df = pd.read_csv(INPUT_DF_PATH)
+print(math.ceil(len(df) / SUPER_CAT_SIZE))
+")
 
 # Starting point
 START=0
