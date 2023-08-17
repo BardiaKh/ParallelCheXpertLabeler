@@ -17,24 +17,23 @@ from config import REPORT_COL, INPUT_DF_PATH, SUPER_CAT_SIZE, CHUNK_SIZE
 def process_dataframe(df):
     # Escaping quotes and wrapping in quotes (if already not)
     df[REPORT_COL] = df[REPORT_COL].apply(lambda x: x if ((str(x).startswith('"') and str(x).endswith('"')) or (str(x).startswith("'") and str(x).endswith("'"))) else '"{}"'.format(str(x).replace('"', '\\"')))
-    
-    # Replace multiple dots with single dot and strip leading/trailing whitespaces
+
+    # Replace multiple dots with a single dot and strip leading/trailing whitespaces
     df[REPORT_COL] = df[REPORT_COL].apply(lambda x: re.sub(r"\.{2,}", ".", x).strip())
 
-    # Replace dots that are preceeded by newline with a single dot
+    # Replace dots that are preceded by a newline with a single dot
     df[REPORT_COL] = df[REPORT_COL].apply(lambda x: re.sub(r"\n\.", ".", x).strip())
 
     # Now, to split sentences without getting empty ones,
-    # we can split on dots that are followed by whitespace or the end of the string:
-    df[REPORT_COL] = df[REPORT_COL].apply(lambda x: [i for i in re.split(r'\.(\s|$)', x) if i.strip()])
+    # we can split on dots that are followed by whitespace or the end of the string, then join them back together:
+    df[REPORT_COL] = df[REPORT_COL].apply(lambda x: ". ".join([i for i in re.split(r'\.(\s|$)', x) if i.strip()]))
 
     # Keep processing until no entries contain 10 or more dots in a row:
     while df[REPORT_COL].str.contains("..........", regex=False).any():
         df[REPORT_COL] = df[REPORT_COL].apply(lambda x: re.sub(r"\.{2,}", ".", x).strip())
         df[REPORT_COL] = df[REPORT_COL].apply(lambda x: re.sub(r"\n\.", ".", x).strip())
-        df[REPORT_COL] = df[REPORT_COL].apply(lambda x: [i for i in re.split(r'\.(\s|$)', x) if i.strip()])
+        df[REPORT_COL] = df[REPORT_COL].apply(lambda x: ". ".join([i for i in re.split(r'\.(\s|$)', x) if i.strip()]))
 
-    df[REPORT_COL] = df[REPORT_COL].apply(lambda x: x[0])
     return df
 
 def collection_from_list(report_list):
